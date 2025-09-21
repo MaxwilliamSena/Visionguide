@@ -1,0 +1,881 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VisionGuide - Tecnologia Assistiva para Deficientes Visuais</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'tech-blue': '#1A2E40',
+                        'electric-cyan': '#00D1FF',
+                        'soft-lime': '#A3FF8F',
+                        'light-gray': '#F2F4F7',
+                        'white': '#FFFFFF'
+                    },
+                    fontFamily: {
+                        'poppins': ['Poppins', 'sans-serif'],
+                        'inter': ['Inter', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        h1, h2, h3, h4, h5, h6 { font-family: 'Poppins', sans-serif; }
+        
+        .hero-gradient {
+            background: linear-gradient(135deg, #1A2E40 0%, #00D1FF 100%);
+        }
+        
+        .floating-animation {
+            animation: float 6s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(3deg); }
+        }
+        
+        .fade-in-up {
+            animation: fadeInUp 0.8s ease-out forwards;
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .model-3d-container {
+            perspective: 1000px;
+            transform-style: preserve-3d;
+        }
+        
+        .device-3d {
+            width: 320px;
+            height: 200px;
+            background: linear-gradient(45deg, #1A2E40, #00D1FF);
+            border-radius: 15px;
+            position: relative;
+            transform: rotateX(10deg) rotateY(20deg);
+            transition: all 0.5s ease;
+            box-shadow: 0 25px 50px rgba(26, 46, 64, 0.3);
+            cursor: pointer;
+            margin: 0 auto;
+        }
+        
+        .device-3d:hover {
+            transform: rotateX(5deg) rotateY(30deg) scale(1.05);
+        }
+        
+        .device-3d::before {
+            content: '';
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            width: 30px;
+            height: 30px;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 50%;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+        }
+        
+        .device-3d::after {
+            content: 'VisionGuide';
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: white;
+            font-weight: 600;
+            font-size: 18px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        
+        .sensor-indicator {
+            position: absolute;
+            top: 30px;
+            right: 30px;
+            width: 20px;
+            height: 20px;
+            background: #A3FF8F;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.7; transform: scale(1.1); }
+        }
+        
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .scroll-smooth { scroll-behavior: smooth; }
+        
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+        
+        .card-hover:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(26, 46, 64, 0.15);
+        }
+        
+        .timeline-item {
+            position: relative;
+            padding-left: 2rem;
+        }
+        
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0.5rem;
+            width: 1rem;
+            height: 1rem;
+            background: #00D1FF;
+            border-radius: 50%;
+            border: 3px solid white;
+            box-shadow: 0 0 0 3px #00D1FF;
+        }
+        
+        .timeline-item:not(:last-child)::after {
+            content: '';
+            position: absolute;
+            left: 0.45rem;
+            top: 1.5rem;
+            width: 2px;
+            height: calc(100% + 1rem);
+            background: linear-gradient(to bottom, #00D1FF, #A3FF8F);
+        }
+        
+        .stats-counter {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #00D1FF;
+        }
+        
+        .component-card {
+            background: white;
+            border-radius: 1rem;
+            padding: 1.5rem;
+            box-shadow: 0 4px 20px rgba(26, 46, 64, 0.1);
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+        
+        .component-card:hover {
+            border-color: #00D1FF;
+            transform: translateY(-5px);
+        }
+    </style>
+</head>
+<body class="font-inter text-tech-blue scroll-smooth">
+    <!-- Header -->
+    <header class="fixed top-0 w-full glass-effect z-50">
+        <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <div class="text-2xl font-bold font-poppins text-white">
+                Vision<span class="text-electric-cyan">Guide</span>
+            </div>
+            <div class="hidden lg:flex space-x-8 text-white">
+                <a href="#inicio" class="hover:text-electric-cyan transition-colors">Início</a>
+                <a href="#projeto" class="hover:text-electric-cyan transition-colors">Projeto</a>
+                <a href="#produto" class="hover:text-electric-cyan transition-colors">Produto</a>
+                <a href="#tecnologia" class="hover:text-electric-cyan transition-colors">Tecnologia</a>
+                <a href="#equipe" class="hover:text-electric-cyan transition-colors">Equipe</a>
+                <a href="#impacto" class="hover:text-electric-cyan transition-colors">Impacto</a>
+                <a href="#contato" class="hover:text-electric-cyan transition-colors">Contato</a>
+            </div>
+            <button onclick="document.getElementById('projeto').scrollIntoView()" class="bg-electric-cyan text-tech-blue px-6 py-2 rounded-full font-semibold hover:bg-soft-lime transition-colors">
+                Conheça o Projeto
+            </button>
+        </nav>
+    </header>
+
+    <!-- Hero Section -->
+    <section id="inicio" class="hero-gradient min-h-screen flex items-center relative overflow-hidden">
+        <!-- Elementos flutuantes -->
+        <div class="absolute top-20 right-20 w-24 h-24 bg-white/10 rounded-full floating-animation"></div>
+        <div class="absolute bottom-40 left-10 w-16 h-16 bg-soft-lime/20 transform rotate-45 floating-animation" style="animation-delay: -2s;"></div>
+        <div class="absolute top-1/2 right-1/4 w-12 h-12 bg-electric-cyan/30 rounded-full floating-animation" style="animation-delay: -4s;"></div>
+        
+        <div class="container mx-auto px-6 grid lg:grid-cols-2 gap-12 items-center">
+            <div class="text-white fade-in-up">
+                <h1 class="text-5xl lg:text-7xl font-bold font-poppins mb-6 leading-tight">
+                    Tecnologia assistiva para mais
+                    <span class="text-electric-cyan">autonomia</span>
+                </h1>
+                <p class="text-xl lg:text-2xl mb-8 opacity-90 leading-relaxed">
+                    Um dispositivo inovador de detecção de objetos que utiliza sensores ultrassônicos e feedback tátil para auxiliar pessoas com deficiência visual em sua mobilidade diária.
+                </p>
+                <button onclick="document.getElementById('projeto').scrollIntoView()" class="bg-electric-cyan text-tech-blue px-8 py-4 rounded-full font-semibold hover:bg-soft-lime transition-all transform hover:scale-105">
+                    Conheça nosso projeto
+                </button>
+            </div>
+            
+            <div class="flex justify-center fade-in-up" style="animation-delay: 0.3s;">
+                <div class="model-3d-container">
+                    <div class="device-3d" onclick="rotateDevice(this)">
+                        <div class="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent rounded-2xl"></div>
+                        <div class="sensor-indicator"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Sobre o Projeto -->
+    <section id="projeto" class="py-20 bg-light-gray">
+        <div class="container mx-auto px-6">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl lg:text-5xl font-bold font-poppins mb-6">Sobre o Projeto</h2>
+                <p class="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
+                    O VisionGuide nasceu da necessidade de criar soluções acessíveis e eficazes para melhorar a mobilidade e independência de pessoas com deficiência visual.
+                </p>
+            </div>
+            
+            <div class="grid lg:grid-cols-2 gap-12 items-center mb-16">
+                <div>
+                    <h3 class="text-3xl font-bold font-poppins mb-6 text-tech-blue">Nossa Motivação</h3>
+                    <p class="text-lg text-gray-600 mb-6 leading-relaxed">
+                        Segundo a OMS, existem mais de 285 milhões de pessoas com deficiência visual no mundo. Nossa equipe identificou a necessidade de desenvolver uma solução tecnológica acessível que pudesse auxiliar na detecção de obstáculos e melhorar a segurança durante a locomoção.
+                    </p>
+                    <div class="space-y-4">
+                        <div class="flex items-center">
+                            <div class="w-3 h-3 bg-electric-cyan rounded-full mr-4"></div>
+                            <span class="text-lg">Detecção precisa de obstáculos até 4 metros</span>
+                        </div>
+                        <div class="flex items-center">
+                            <div class="w-3 h-3 bg-electric-cyan rounded-full mr-4"></div>
+                            <span class="text-lg">Feedback tátil intuitivo e personalizável</span>
+                        </div>
+                        <div class="flex items-center">
+                            <div class="w-3 h-3 bg-electric-cyan rounded-full mr-4"></div>
+                            <span class="text-lg">Design ergonômico e portátil</span>
+                        </div>
+                        <div class="flex items-center">
+                            <div class="w-3 h-3 bg-electric-cyan rounded-full mr-4"></div>
+                            <span class="text-lg">Baixo custo de produção</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-white p-8 rounded-2xl shadow-lg">
+                    <h4 class="text-2xl font-bold font-poppins mb-6 text-center">Evolução do Protótipo</h4>
+                    <div class="space-y-6">
+                        <div class="timeline-item">
+                            <h5 class="font-semibold text-lg mb-2">Versão 1.0 - Atual</h5>
+                            <p class="text-gray-600">Sensor ultrassônico HC-SR04 com feedback por vibração. Detecção básica de obstáculos frontais.</p>
+                        </div>
+                        <div class="timeline-item">
+                            <h5 class="font-semibold text-lg mb-2">Versão 2.0 - Em Desenvolvimento</h5>
+                            <p class="text-gray-600">Múltiplos sensores para detecção 360°. Feedback sonoro opcional e intensidade variável.</p>
+                        </div>
+                        <div class="timeline-item">
+                            <h5 class="font-semibold text-lg mb-2">Versão 3.0 - Planejada</h5>
+                            <p class="text-gray-600">Integração com smartphone, GPS, comandos de voz e machine learning para reconhecimento de padrões.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Produto em Destaque -->
+    <section id="produto" class="py-20">
+        <div class="container mx-auto px-6">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl lg:text-5xl font-bold font-poppins mb-6">VisionGuide v1.0</h2>
+                <p class="text-xl text-gray-600">Nosso protótipo atual em funcionamento</p>
+            </div>
+            
+            <div class="grid lg:grid-cols-2 gap-12 items-center mb-12">
+                <div>
+                    <h3 class="text-3xl font-bold font-poppins mb-6 text-tech-blue">Como Funciona</h3>
+                    <div class="space-y-6">
+                        <div class="flex items-start">
+                            <div class="w-12 h-12 bg-electric-cyan rounded-full flex items-center justify-center mr-4 flex-shrink-0">
+                                <span class="text-white font-bold">1</span>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold text-lg mb-2">Detecção por Ultrassom</h4>
+                                <p class="text-gray-600">O sensor HC-SR04 emite ondas ultrassônicas que detectam obstáculos em um raio de até 4 metros à frente.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-start">
+                            <div class="w-12 h-12 bg-soft-lime rounded-full flex items-center justify-center mr-4 flex-shrink-0">
+                                <span class="text-tech-blue font-bold">2</span>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold text-lg mb-2">Processamento Inteligente</h4>
+                                <p class="text-gray-600">O Arduino Uno processa os dados do sensor e calcula a distância dos obstáculos em tempo real.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-start">
+                            <div class="w-12 h-12 bg-tech-blue rounded-full flex items-center justify-center mr-4 flex-shrink-0">
+                                <span class="text-white font-bold">3</span>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold text-lg mb-2">Feedback Tátil</h4>
+                                <p class="text-gray-600">Motores de vibração fornecem feedback proporcional à distância: quanto mais próximo, maior a intensidade.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="flex justify-center">
+                    <div class="model-3d-container">
+                        <div class="device-3d" onclick="rotateDevice(this)" style="background: linear-gradient(45deg, #1A2E40, #A3FF8F);">
+                            <div class="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent rounded-2xl"></div>
+                            <div class="sensor-indicator"></div>
+                            <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-center">
+                                <div class="text-white font-bold text-sm mb-1">Protótipo v1.0</div>
+                                <div class="text-white/80 text-xs">Clique para rotacionar</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Demonstração em Vídeo -->
+            <div class="bg-light-gray rounded-2xl p-8 text-center">
+                <h4 class="text-2xl font-bold font-poppins mb-6">Demonstração do Produto</h4>
+                <div class="bg-tech-blue rounded-xl p-12 text-white">
+                    <div class="text-6xl mb-4">🎥</div>
+                    <p class="text-xl mb-4">Vídeo demonstrativo do VisionGuide em ação</p>
+                    <p class="text-sm opacity-80">Mostrando a detecção de obstáculos e feedback tátil em tempo real</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Tecnologia Utilizada -->
+    <section id="tecnologia" class="py-20 bg-light-gray">
+        <div class="container mx-auto px-6">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl lg:text-5xl font-bold font-poppins mb-6">Tecnologia Utilizada</h2>
+                <p class="text-xl text-gray-600">Componentes e tecnologias que tornam o VisionGuide possível</p>
+            </div>
+            
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div class="component-card text-center">
+                    <div class="w-16 h-16 bg-electric-cyan rounded-full flex items-center justify-center mx-auto mb-6">
+                        <span class="text-2xl text-white">🔧</span>
+                    </div>
+                    <h3 class="text-xl font-bold font-poppins mb-4">Arduino Uno</h3>
+                    <p class="text-gray-600">Microcontrolador principal responsável pelo processamento dos dados dos sensores e controle dos atuadores.</p>
+                </div>
+                
+                <div class="component-card text-center">
+                    <div class="w-16 h-16 bg-soft-lime rounded-full flex items-center justify-center mx-auto mb-6">
+                        <span class="text-2xl text-tech-blue">📡</span>
+                    </div>
+                    <h3 class="text-xl font-bold font-poppins mb-4">Sensor HC-SR04</h3>
+                    <p class="text-gray-600">Sensor ultrassônico de alta precisão para detecção de obstáculos com alcance de 2cm a 4m.</p>
+                </div>
+                
+                <div class="component-card text-center">
+                    <div class="w-16 h-16 bg-tech-blue rounded-full flex items-center justify-center mx-auto mb-6">
+                        <span class="text-2xl text-white">📳</span>
+                    </div>
+                    <h3 class="text-xl font-bold font-poppins mb-4">Motor de Vibração</h3>
+                    <p class="text-gray-600">Atuadores táteis que fornecem feedback proporcional à distância dos obstáculos detectados.</p>
+                </div>
+                
+                <div class="component-card text-center">
+                    <div class="w-16 h-16 bg-electric-cyan rounded-full flex items-center justify-center mx-auto mb-6">
+                        <span class="text-2xl text-white">🔋</span>
+                    </div>
+                    <h3 class="text-xl font-bold font-poppins mb-4">Bateria Li-ion</h3>
+                    <p class="text-gray-600">Sistema de alimentação recarregável com autonomia de até 12 horas de uso contínuo.</p>
+                </div>
+                
+                <div class="component-card text-center">
+                    <div class="w-16 h-16 bg-soft-lime rounded-full flex items-center justify-center mx-auto mb-6">
+                        <span class="text-2xl text-tech-blue">⚡</span>
+                    </div>
+                    <h3 class="text-xl font-bold font-poppins mb-4">Circuito Integrado</h3>
+                    <p class="text-gray-600">PCB customizada para otimizar o tamanho, peso e eficiência energética do dispositivo.</p>
+                </div>
+                
+                <div class="component-card text-center">
+                    <div class="w-16 h-16 bg-tech-blue rounded-full flex items-center justify-center mx-auto mb-6">
+                        <span class="text-2xl text-white">🎛</span>
+                    </div>
+                    <h3 class="text-xl font-bold font-poppins mb-4">Interface de Controle</h3>
+                    <p class="text-gray-600">Botões táteis para ajuste de sensibilidade e modo de operação do dispositivo.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Equipe & Pesquisadores -->
+    <section id="equipe" class="py-20">
+        <div class="container mx-auto px-6">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl lg:text-5xl font-bold font-poppins mb-6">Nossa Equipe</h2>
+                <p class="text-xl text-gray-600">Pesquisadores dedicados ao desenvolvimento de tecnologia assistiva</p>
+            </div>
+            
+            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+                <div class="text-center card-hover">
+                    <div class="w-32 h-32 bg-gradient-to-br from-electric-cyan to-soft-lime rounded-full mx-auto mb-6 flex items-center justify-center">
+                        <span class="text-4xl text-white">👨‍💻</span>
+                    </div>
+                    <h3 class="text-xl font-bold font-poppins mb-2">Lucas Silva</h3>
+                    <p class="text-electric-cyan font-semibold mb-3">Líder do Projeto</p>
+                    <p class="text-gray-600 text-sm">Engenharia de Computação - Especialista em sistemas embarcados e IoT.</p>
+                </div>
+                
+                <div class="text-center card-hover">
+                    <div class="w-32 h-32 bg-gradient-to-br from-tech-blue to-electric-cyan rounded-full mx-auto mb-6 flex items-center justify-center">
+                        <span class="text-4xl text-white">👩‍🔬</span>
+                    </div>
+                    <h3 class="text-xl font-bold font-poppins mb-2">Ana Costa</h3>
+                    <p class="text-electric-cyan font-semibold mb-3">Desenvolvedora Hardware</p>
+                    <p class="text-gray-600 text-sm">Engenharia Eletrônica - Foco em circuitos e sensores para tecnologia assistiva.</p>
+                </div>
+                
+                <div class="text-center card-hover">
+                    <div class="w-32 h-32 bg-gradient-to-br from-soft-lime to-tech-blue rounded-full mx-auto mb-6 flex items-center justify-center">
+                        <span class="text-4xl text-white">👨‍🎓</span>
+                    </div>
+                    <h3 class="text-xl font-bold font-poppins mb-2">Pedro Santos</h3>
+                    <p class="text-electric-cyan font-semibold mb-3">Pesquisador UX</p>
+                    <p class="text-gray-600 text-sm">Design - Especialista em acessibilidade e experiência do usuário.</p>
+                </div>
+                
+                <div class="text-center card-hover">
+                    <div class="w-32 h-32 bg-gradient-to-br from-electric-cyan to-tech-blue rounded-full mx-auto mb-6 flex items-center justify-center">
+                        <span class="text-4xl text-white">👩‍⚕</span>
+                    </div>
+                    <h3 class="text-xl font-bold font-poppins mb-2">Maria Lima</h3>
+                    <p class="text-electric-cyan font-semibold mb-3">Consultora Clínica</p>
+                    <p class="text-gray-600 text-sm">Terapia Ocupacional - Especialista em reabilitação e tecnologia assistiva.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Impacto Social -->
+    <section id="impacto" class="py-20 bg-light-gray">
+        <div class="container mx-auto px-6">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl lg:text-5xl font-bold font-poppins mb-6">Impacto Social</h2>
+                <p class="text-xl text-gray-600">Transformando vidas através da tecnologia acessível</p>
+            </div>
+            
+            <!-- Estatísticas -->
+            <div class="grid md:grid-cols-4 gap-8 mb-16">
+                <div class="text-center">
+                    <div class="stats-counter mb-2" data-target="285">0</div>
+                    <p class="text-lg font-semibold text-gray-600">Milhões de pessoas com deficiência visual no mundo</p>
+                </div>
+                <div class="text-center">
+                    <div class="stats-counter mb-2" data-target="90">0</div>
+                    <p class="text-lg font-semibold text-gray-600">% vivem em países em desenvolvimento</p>
+                </div>
+                <div class="text-center">
+                    <div class="stats-counter mb-2" data-target="80">0</div>
+                    <p class="text-lg font-semibold text-gray-600">% dos casos são evitáveis ou tratáveis</p>
+                </div>
+                <div class="text-center">
+                    <div class="stats-counter mb-2" data-target="50">0</div>
+                    <p class="text-lg font-semibold text-gray-600">% menor custo que soluções similares</p>
+                </div>
+            </div>
+            
+            <!-- Benefícios -->
+            <div class="grid md:grid-cols-3 gap-8 mb-12">
+                <div class="bg-white p-8 rounded-2xl shadow-lg card-hover text-center">
+                    <div class="w-16 h-16 bg-electric-cyan rounded-full flex items-center justify-center mx-auto mb-6">
+                        <span class="text-2xl text-white">🚶‍♂</span>
+                    </div>
+                    <h3 class="text-xl font-bold font-poppins mb-4">Maior Autonomia</h3>
+                    <p class="text-gray-600">Permite maior independência na locomoção, reduzindo a dependência de terceiros para atividades cotidianas.</p>
+                </div>
+                
+                <div class="bg-white p-8 rounded-2xl shadow-lg card-hover text-center">
+                    <div class="w-16 h-16 bg-soft-lime rounded-full flex items-center justify-center mx-auto mb-6">
+                        <span class="text-2xl text-tech-blue">🛡</span>
+                    </div>
+                    <h3 class="text-xl font-bold font-poppins mb-4">Maior Segurança</h3>
+                    <p class="text-gray-600">Reduz significativamente o risco de acidentes e colisões durante a mobilidade urbana.</p>
+                </div>
+                
+                <div class="bg-white p-8 rounded-2xl shadow-lg card-hover text-center">
+                    <div class="w-16 h-16 bg-tech-blue rounded-full flex items-center justify-center mx-auto mb-6">
+                        <span class="text-2xl text-white">💰</span>
+                    </div>
+                    <h3 class="text-xl font-bold font-poppins mb-4">Baixo Custo</h3>
+                    <p class="text-gray-600">Solução acessível financeiramente, democratizando o acesso à tecnologia assistiva.</p>
+                </div>
+            </div>
+            
+            <!-- Depoimentos Futuros -->
+            <div class="bg-white p-8 rounded-2xl shadow-lg text-center">
+                <h4 class="text-2xl font-bold font-poppins mb-6">Depoimentos de Usuários</h4>
+                <div class="text-gray-500 italic">
+                    <p class="text-lg mb-4">"Espaço reservado para futuros depoimentos de usuários que testaram o VisionGuide."</p>
+                    <p>Estamos em fase de testes com voluntários da comunidade de pessoas com deficiência visual.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Próximos Passos -->
+    <section class="py-20">
+        <div class="container mx-auto px-6">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl lg:text-5xl font-bold font-poppins mb-6">Próximos Passos</h2>
+                <p class="text-xl text-gray-600">O futuro do VisionGuide e oportunidades de colaboração</p>
+            </div>
+            
+            <div class="grid lg:grid-cols-2 gap-12">
+                <div>
+                    <h3 class="text-3xl font-bold font-poppins mb-6 text-tech-blue">Melhorias Planejadas</h3>
+                    <div class="space-y-6">
+                        <div class="flex items-start">
+                            <div class="w-8 h-8 bg-electric-cyan rounded-full flex items-center justify-center mr-4 flex-shrink-0 mt-1">
+                                <span class="text-white text-sm">✓</span>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold text-lg mb-2">Múltiplos Sensores</h4>
+                                <p class="text-gray-600">Implementação de sensores laterais para detecção 360° de obstáculos.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-start">
+                            <div class="w-8 h-8 bg-electric-cyan rounded-full flex items-center justify-center mr-4 flex-shrink-0 mt-1">
+                                <span class="text-white text-sm">✓</span>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold text-lg mb-2">Comandos de Voz</h4>
+                                <p class="text-gray-600">Interface por voz para configuração e feedback sonoro opcional.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-start">
+                            <div class="w-8 h-8 bg-electric-cyan rounded-full flex items-center justify-center mr-4 flex-shrink-0 mt-1">
+                                <span class="text-white text-sm">✓</span>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold text-lg mb-2">Conectividade</h4>
+                                <p class="text-gray-600">Integração com smartphones via Bluetooth para configurações avançadas.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-start">
+                            <div class="w-8 h-8 bg-electric-cyan rounded-full flex items-center justify-center mr-4 flex-shrink-0 mt-1">
+                                <span class="text-white text-sm">✓</span>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold text-lg mb-2">Machine Learning</h4>
+                                <p class="text-gray-600">IA para reconhecimento de padrões e aprendizado de rotas frequentes.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-light-gray p-8 rounded-2xl">
+                    <h3 class="text-3xl font-bold font-poppins mb-6 text-tech-blue">Oportunidades de Colaboração</h3>
+                    <div class="space-y-4">
+                        <div class="bg-white p-4 rounded-lg">
+                            <h4 class="font-semibold mb-2">🏛 Instituições de Pesquisa</h4>
+                            <p class="text-gray-600 text-sm">Parcerias para desenvolvimento de novas funcionalidades e testes clínicos.</p>
+                        </div>
+                        
+                        <div class="bg-white p-4 rounded-lg">
+                            <h4 class="font-semibold mb-2">🏢 Empresas de Tecnologia</h4>
+                            <p class="text-gray-600 text-sm">Colaboração para produção em escala e distribuição do produto.</p>
+                        </div>
+                        
+                        <div class="bg-white p-4 rounded-lg">
+                            <h4 class="font-semibold mb-2">🏥 Organizações de Saúde</h4>
+                            <p class="text-gray-600 text-sm">Testes com usuários reais e validação clínica da eficácia.</p>
+                        </div>
+                        
+                        <div class="bg-white p-4 rounded-lg">
+                            <h4 class="font-semibold mb-2">💰 Investidores e Financiadores</h4>
+                            <p class="text-gray-600 text-sm">Apoio financeiro para desenvolvimento e comercialização.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contato -->
+    <section id="contato" class="py-20 bg-tech-blue text-white">
+        <div class="container mx-auto px-6">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl lg:text-5xl font-bold font-poppins mb-6">Entre em Contato</h2>
+                <p class="text-xl opacity-90">Interessado em colaborar ou saber mais sobre o projeto?</p>
+            </div>
+            
+            <div class="grid lg:grid-cols-2 gap-12">
+                <div>
+                    <h3 class="text-2xl font-bold font-poppins mb-6">Fale Conosco</h3>
+                    <form class="space-y-6" onsubmit="handleContactSubmit(event)">
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Nome Completo</label>
+                            <input type="text" required class="w-full px-4 py-3 rounded-lg bg-white/10 border border-white/20 focus:border-electric-cyan focus:outline-none text-white placeholder-white/60" placeholder="Seu nome">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-2">E-mail</label>
+                            <input type="email" required class="w-full px-4 py-3 rounded-lg bg-white/10 border border-white/20 focus:border-electric-cyan focus:outline-none text-white placeholder-white/60" placeholder="seu@email.com">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Instituição/Empresa</label>
+                            <input type="text" class="w-full px-4 py-3 rounded-lg bg-white/10 border border-white/20 focus:border-electric-cyan focus:outline-none text-white placeholder-white/60" placeholder="Sua instituição">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Tipo de Interesse</label>
+                            <select class="w-full px-4 py-3 rounded-lg bg-white/10 border border-white/20 focus:border-electric-cyan focus:outline-none text-white">
+                                <option value="" class="text-tech-blue">Selecione uma opção</option>
+                                <option value="pesquisa" class="text-tech-blue">Colaboração em Pesquisa</option>
+                                <option value="investimento" class="text-tech-blue">Investimento/Financiamento</option>
+                                <option value="parceria" class="text-tech-blue">Parceria Comercial</option>
+                                <option value="teste" class="text-tech-blue">Teste do Produto</option>
+                                <option value="outro" class="text-tech-blue">Outro</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Mensagem</label>
+                            <textarea rows="5" required class="w-full px-4 py-3 rounded-lg bg-white/10 border border-white/20 focus:border-electric-cyan focus:outline-none text-white placeholder-white/60 resize-none" placeholder="Conte-nos mais sobre seu interesse..."></textarea>
+                        </div>
+                        <button type="submit" class="w-full bg-electric-cyan text-tech-blue py-3 rounded-lg font-semibold hover:bg-soft-lime transition-colors">
+                            Enviar Mensagem
+                        </button>
+                    </form>
+                </div>
+                
+                <div>
+                    <h3 class="text-2xl font-bold font-poppins mb-6">Informações do Projeto</h3>
+                    <div class="space-y-6">
+                        <div class="flex items-start">
+                            <div class="w-12 h-12 bg-electric-cyan rounded-full flex items-center justify-center mr-4 flex-shrink-0">
+                                <span class="text-2xl text-tech-blue">🎓</span>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold mb-1">Instituição</h4>
+                                <p class="opacity-90">Universidade Federal de Tecnologia<br>Departamento de Engenharia</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-start">
+                            <div class="w-12 h-12 bg-electric-cyan rounded-full flex items-center justify-center mr-4 flex-shrink-0">
+                                <span class="text-2xl text-tech-blue">📧</span>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold mb-1">E-mail do Projeto</h4>
+                                <p class="opacity-90">visionguide@universidade.edu.br</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-start">
+                            <div class="w-12 h-12 bg-electric-cyan rounded-full flex items-center justify-center mr-4 flex-shrink-0">
+                                <span class="text-2xl text-tech-blue">📱</span>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold mb-1">Telefone</h4>
+                                <p class="opacity-90">(11) 3000-0000</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-start">
+                            <div class="w-12 h-12 bg-electric-cyan rounded-full flex items-center justify-center mr-4 flex-shrink-0">
+                                <span class="text-2xl text-tech-blue">🌐</span>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold mb-1">Redes Sociais</h4>
+                                <div class="flex space-x-3 mt-2">
+                                    <a href="#" class="w-8 h-8 bg-white/10 rounded-full flex items-center justify-center hover:bg-electric-cyan transition-colors">
+                                        <span class="text-sm">📧</span>
+                                    </a>
+                                    <a href="#" class="w-8 h-8 bg-white/10 rounded-full flex items-center justify-center hover:bg-electric-cyan transition-colors">
+                                        <span class="text-sm">📱</span>
+                                    </a>
+                                    <a href="#" class="w-8 h-8 bg-white/10 rounded-full flex items-center justify-center hover:bg-electric-cyan transition-colors">
+                                        <span class="text-sm">🌐</span>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-tech-blue border-t border-white/10 py-12 text-white">
+        <div class="container mx-auto px-6">
+            <div class="grid md:grid-cols-3 gap-8 mb-8">
+                <div>
+                    <div class="text-2xl font-bold font-poppins mb-4">
+                        Vision<span class="text-electric-cyan">Guide</span>
+                    </div>
+                    <p class="opacity-90 mb-4 italic">"Inovação e acessibilidade para transformar vidas."</p>
+                    <div class="flex space-x-4">
+                        <a href="#" class="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center hover:bg-electric-cyan transition-colors">
+                            <span class="text-sm">📧</span>
+                        </a>
+                        <a href="#" class="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center hover:bg-electric-cyan transition-colors">
+                            <span class="text-sm">📱</span>
+                        </a>
+                        <a href="#" class="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center hover:bg-electric-cyan transition-colors">
+                            <span class="text-sm">🌐</span>
+                        </a>
+                    </div>
+                </div>
+                
+                <div>
+                    <h4 class="font-semibold mb-4">Navegação</h4>
+                    <ul class="space-y-2 opacity-90">
+                        <li><a href="#projeto" class="hover:text-electric-cyan transition-colors">Sobre o Projeto</a></li>
+                        <li><a href="#produto" class="hover:text-electric-cyan transition-colors">Produto</a></li>
+                        <li><a href="#tecnologia" class="hover:text-electric-cyan transition-colors">Tecnologia</a></li>
+                        <li><a href="#equipe" class="hover:text-electric-cyan transition-colors">Equipe</a></li>
+                        <li><a href="#impacto" class="hover:text-electric-cyan transition-colors">Impacto</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4 class="font-semibold mb-4">Parceiros Institucionais</h4>
+                    <div class="grid grid-cols-2 gap-4 opacity-60">
+                        <div class="text-center">
+                            <div class="w-12 h-12 bg-white/10 rounded-full flex items-center justify-center mx-auto mb-2">
+                                <span class="text-white font-bold text-xs">UFT</span>
+                            </div>
+                            <p class="text-xs">Universidade Federal</p>
+                        </div>
+                        <div class="text-center">
+                            <div class="w-12 h-12 bg-white/10 rounded-full flex items-center justify-center mx-auto mb-2">
+                                <span class="text-white font-bold text-xs">CNPq</span>
+                            </div>
+                            <p class="text-xs">Conselho Nacional</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="border-t border-white/10 pt-8 text-center text-sm opacity-70">
+                <p>© 2024 VisionGuide Project. Desenvolvido para fins acadêmicos e de pesquisa.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Rotação do modelo 3D
+        function rotateDevice(element) {
+            const currentTransform = element.style.transform;
+            if (currentTransform.includes('rotateY(40deg)')) {
+                element.style.transform = 'rotateX(10deg) rotateY(20deg)';
+            } else {
+                element.style.transform = 'rotateX(10deg) rotateY(40deg)';
+            }
+        }
+
+        // Animação dos contadores
+        function animateCounters() {
+            const counters = document.querySelectorAll('.stats-counter');
+            counters.forEach(counter => {
+                const target = parseInt(counter.getAttribute('data-target'));
+                const increment = target / 100;
+                let current = 0;
+                
+                const timer = setInterval(() => {
+                    current += increment;
+                    if (current >= target) {
+                        counter.textContent = target;
+                        clearInterval(timer);
+                    } else {
+                        counter.textContent = Math.floor(current);
+                    }
+                }, 20);
+            });
+        }
+
+        // Observador de interseção para animações
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    if (entry.target.classList.contains('stats-counter')) {
+                        animateCounters();
+                        observer.unobserve(entry.target);
+                    }
+                }
+            });
+        });
+
+        // Observar contadores
+        document.querySelectorAll('.stats-counter').forEach(counter => {
+            observer.observe(counter);
+        });
+
+        // Navegação suave
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Formulário de contato
+        function handleContactSubmit(event) {
+            event.preventDefault();
+            const form = event.target;
+            const button = form.querySelector('button[type="submit"]');
+            const originalText = button.textContent;
+            
+            button.textContent = 'Enviando...';
+            button.disabled = true;
+            
+            setTimeout(() => {
+                button.textContent = 'Mensagem Enviada!';
+                button.style.backgroundColor = '#A3FF8F';
+                form.reset();
+                
+                setTimeout(() => {
+                    button.textContent = originalText;
+                    button.disabled = false;
+                    button.style.backgroundColor = '';
+                }, 3000);
+            }, 1500);
+        }
+
+        // Animações de entrada
+        const fadeElements = document.querySelectorAll('.fade-in-up');
+        fadeElements.forEach((element, index) => {
+            element.style.animationDelay = ${index * 0.1}s;
+        });
+
+        // Menu mobile (se necessário)
+        function toggleMobileMenu() {
+            // Implementar se necessário
+        }
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9826b797d4f7ca5e',t:'MTc1ODQyNzg3Mi4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
