@@ -26,6 +26,106 @@
         }
     </script>
     <style>
+
+                /* Carrossel 1 - Fade */
+        .fade-carousel .slide {
+            opacity: 0;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            transition: opacity 0.8s ease-in-out;
+        }
+        
+        .fade-carousel .slide.active {
+            opacity: 1;
+        }
+        
+        /* Carrossel 2 - 3D Flip */
+        .flip-carousel {
+            perspective: 1000px;
+        }
+        
+        .flip-container {
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 0.6s;
+        }
+        
+        .flip-container.flipped {
+            transform: rotateY(180deg);
+        }
+        
+        .flip-front, .flip-back {
+            backface-visibility: hidden;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+        
+        .flip-back {
+            transform: rotateY(180deg);
+        }
+        
+        /* Carrossel 3 - Vertical */
+        .vertical-carousel {
+            overflow: hidden;
+        }
+        
+        .vertical-track {
+            transition: transform 0.5s ease-in-out;
+        }
+        
+        /* Carrossel 4 - Thumbnails */
+        .thumbnail-carousel .main-image {
+            transition: all 0.3s ease;
+        }
+        
+        .thumbnail {
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .thumbnail:hover {
+            transform: scale(1.1);
+        }
+        
+        .thumbnail.active {
+            border: 3px solid #3b82f6;
+            transform: scale(1.1);
+        }
+        
+        /* Carrossel 5 - Cards Infinito */
+        .infinite-carousel {
+            overflow: hidden;
+        }
+        
+        .infinite-track {
+            display: flex;
+            animation: scroll 20s linear infinite;
+        }
+        
+        .infinite-track:hover {
+            animation-play-state: paused;
+        }
+        
+        @keyframes scroll {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+        
+        .card-3d {
+            transition: transform 0.3s ease;
+        }
+        
+        .card-3d:hover {
+            transform: translateY(-10px) rotateX(5deg);
+        }
+
+
         body { font-family: 'Inter', sans-serif; }
         h1, h2, h3, h4, h5, h6 { font-family: 'Poppins', sans-serif; }
         
@@ -180,6 +280,44 @@
         .component-card:hover {
             border-color: #00D1FF;
             transform: translateY(-5px);
+        }
+
+         /* ------------Video----------- */
+        /* ESTILOS DE CENTRALIZAÇÃO */
+        /* ----------------------- */
+        body {
+            font-family: sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+
+        .video-section {
+            /* Flexbox para garantir que o contêiner interno esteja centralizado */
+            display: flex;
+            justify-content: center;
+            padding: 40px 20px;
+        }
+
+        .video-wrapper {
+            /* Define o tamanho máximo para a responsividade */
+            width: 90%;
+            max-width: 800px; 
+            margin: 0 auto; /* Garante o alinhamento central */
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2); /* Adiciona um destaque */
+            border-radius: 8px;
+            overflow: hidden; /* Garante que a sombra fique correta */
+        }
+
+        /* ----------------------- */
+        /* ESTILOS DO VÍDEO */
+        /* ----------------------- */
+        .centered-video {
+            /* Ocupa 100% da largura do contêiner */
+            width: 100%;
+            height: auto;
+            display: block; /* Remove espaços indesejados abaixo de elementos inline */
+            cursor: pointer; /* Indica que é clicável */
         }
     </style>
 </head>
@@ -351,17 +489,69 @@
                     </div>
                 </div>
             </div>
-            
-            <!-- Demonstração em Vídeo -->
-            <div class="bg-light-gray rounded-2xl p-8 text-center">
-                <h4 class="text-2xl font-bold font-poppins mb-6">Demonstração do Produto</h4>
-                <div class="bg-tech-blue rounded-xl p-12 text-white">
-                    <div class="text-6xl mb-4">🎥</div>
-                    <p class="text-xl mb-4">Vídeo demonstrativo do VisionGuide em ação</p>
-                    <p class="text-sm opacity-80">Mostrando a detecção de obstáculos e feedback tátil em tempo real</p>
+    </section>
+
+
+     <!-- Carrossel 3: Vertical -->
+    <section class="py-16 bg-gray-800">
+        <div class="container mx-auto px-6">
+            <h2 class="text-3xl font-bold text-center mb-8 text-purple-400">3. Carrossel Vertical</h2>
+            <div class="max-w-2xl mx-auto">
+                <div class="vertical-carousel h-100 bg-gray-700 rounded-2xl relative overflow-hidden">
+                    <div class="vertical-track" id="verticalTrack">
+                        <div class="h-100 bg-gradient-to-r from-cyan-500 to-blue-600 flex items-center justify-center" style="background-image: url('');">
+                            <div class="text-center">
+                              <img src="https://github.com/MaxwilliamSena/Visionguide/blob/main/1.jpg?raw=true" alt="" style="height: 520px;"> 
+                            </div>
+                        </div>
+                        <div class="h-100 bg-gradient-to-r from-emerald-500 to-teal-600 flex items-center justify-center">
+                            <div class="text-center">
+                                <img src="https://github.com/MaxwilliamSena/Visionguide/blob/main/2.jpg?raw=true" alt="" style="height: 520px;"> 
+                            </div>
+                        </div>
+                        <div class="h-100 bg-gradient-to-r from-violet-500 to-purple-600 flex items-center justify-center">
+                            <div class="text-center">
+                                <img src="https://github.com/MaxwilliamSena/Visionguide/blob/main/3.jpg?raw=true" alt="" style="height: 520px;"> 
+                            </div>
+                        </div>
+                        <div class="h-100 bg-gradient-to-r from-violet-500 to-purple-600 flex items-center justify-center">
+                            <div class="text-center">
+                                <img src="https://github.com/MaxwilliamSena/Visionguide/blob/main/4.jpg?raw=true" alt="" style="height: 520px;"> 
+                            </div>
+                        </div>
+                        <div class="h-100 bg-gradient-to-r from-violet-500 to-purple-600 flex items-center justify-center">
+                            <div class="text-center">
+                                <img src="https://github.com/MaxwilliamSena/Visionguide/blob/main/vermelhor.jpg?raw=true" alt="" style="height: 520px; width: 680px;"> 
+                            </div>
+                        </div>
+                        <div class="h-100 bg-gradient-to-r from-violet-500 to-purple-600 flex items-center justify-center">
+                            <div class="text-center">
+                                <img src="https://github.com/MaxwilliamSena/Visionguide/blob/main/6.jpg?raw=true" alt="" style="height: 520px;"> 
+                            </div>
+                        </div>
+                        <div class="h-100 bg-gradient-to-r from-violet-500 to-purple-600 flex items-center justify-center">
+                            <div class="text-center">
+                                <img src="https://github.com/MaxwilliamSena/Visionguide/blob/main/7.jpg?raw=true" alt="" style="height: 520px;"> 
+                            </div>
+                        </div>
+                        <div class="h-100 bg-gradient-to-r from-violet-500 to-purple-600 flex items-center justify-center">
+                            <div class="text-center">
+                                <img src="https://github.com/MaxwilliamSena/Visionguide/blob/main/0.jpg?raw=true" alt="" style="height: 520px; width: 680px;"> 
+                            </div>
+                        </div>
+                    </div>
                 </div>
+
             </div>
         </div>
+    </section>
+
+    <section class="video-section hero-gradient min-h-screen flex items-center relative overflow-hidden">
+        <div class="video-wrapper">
+        
+        <iframe title="vimeo-player" src="https://player.vimeo.com/video/1125992057?h=db14e0b782" width="640" height="360" frameborder="0" referrerpolicy="strict-origin-when-cross-origin" allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share"   allowfullscreen></iframe>
+
+    </div>
     </section>
 
     <!-- Tecnologia Utilizada -->
@@ -432,42 +622,61 @@
                 <p class="text-xl text-gray-600">Pesquisadores dedicados ao desenvolvimento de tecnologia assistiva</p>
             </div>
             
-            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8" style="display: flex;">
                 <div class="text-center card-hover">
                     <div class="w-32 h-32 bg-gradient-to-br from-electric-cyan to-soft-lime rounded-full mx-auto mb-6 flex items-center justify-center">
-                        <span class="text-4xl text-white">👨‍💻</span>
+                        <img src="https://github.com/MaxwilliamSena/Visionguide/blob/main/Gustavo.jpg?raw=true" alt="" style="border-radius: 75PX; height: 135PX; width: 150PX;">
                     </div>
-                    <h3 class="text-xl font-bold font-poppins mb-2">Lucas Silva</h3>
-                    <p class="text-electric-cyan font-semibold mb-3">Líder do Projeto</p>
-                    <p class="text-gray-600 text-sm">Engenharia de Computação - Especialista em sistemas embarcados e IoT.</p>
+                    <h3 class="text-xl font-bold font-poppins mb-2">Gustavo</h3>
+                    <p class="text-electric-cyan font-semibold mb-3">Desenvolvedor e Produtor</p>
+                    <p class="text-gray-600 text-sm">Atuou na prototipagem e produção do produto, contribuindo também no desenvolvimento técnico e na realização de pesquisas para aprimorar o projeto.
+Ricardo Souza</p>
                 </div>
                 
                 <div class="text-center card-hover">
                     <div class="w-32 h-32 bg-gradient-to-br from-tech-blue to-electric-cyan rounded-full mx-auto mb-6 flex items-center justify-center">
-                        <span class="text-4xl text-white">👩‍🔬</span>
+                        <img src="https://github.com/MaxwilliamSena/Visionguide/blob/main/Thiago.jpg?raw=true" alt="" style="border-radius: 75PX; height: 135PX; width: 150PX;">
                     </div>
-                    <h3 class="text-xl font-bold font-poppins mb-2">Ana Costa</h3>
-                    <p class="text-electric-cyan font-semibold mb-3">Desenvolvedora Hardware</p>
-                    <p class="text-gray-600 text-sm">Engenharia Eletrônica - Foco em circuitos e sensores para tecnologia assistiva.</p>
+                    <h3 class="text-xl font-bold font-poppins mb-2">Thiago</h3>
+                    <p class="text-electric-cyan font-semibold mb-3">Pesquisador e Co-Produtor</p>
+                    <p class="text-gray-600 text-sm">Responsável pela listagem e análise de pesquisas para embasar o projeto. Atuou também como co-produtor na prototipagem e no desenvolvimento do produto final.</p>
                 </div>
                 
                 <div class="text-center card-hover">
                     <div class="w-32 h-32 bg-gradient-to-br from-soft-lime to-tech-blue rounded-full mx-auto mb-6 flex items-center justify-center">
-                        <span class="text-4xl text-white">👨‍🎓</span>
+                        <img src="https://github.com/MaxwilliamSena/Visionguide/blob/main/Francisco.jpg?raw=true" alt="" style="border-radius: 75PX; height: 135PX; width: 150PX;">
                     </div>
-                    <h3 class="text-xl font-bold font-poppins mb-2">Pedro Santos</h3>
-                    <p class="text-electric-cyan font-semibold mb-3">Pesquisador UX</p>
-                    <p class="text-gray-600 text-sm">Design - Especialista em acessibilidade e experiência do usuário.</p>
+                    <h3 class="text-xl font-bold font-poppins mb-2">Ricardo Souza</h3>
+                    <p class="text-electric-cyan font-semibold mb-3">Analista de Requisitos e Testes</p>
+                    <p class="text-gray-600 text-sm">Contribuiu na análise de requisitos e testes do produto. Atuou também na análise de mercado e na coleta de dados para embasar o desenvolvimento do projeto.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="equipe" class="py-20">
+        <div class="container mx-auto px-6">
+            
+            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8" style="display: flex;">
+                
+                <div class="text-center card-hover">
+                    <div class="w-32 h-32 bg-gradient-to-br from-soft-lime to-tech-blue rounded-full mx-auto mb-6 flex items-center justify-center">
+                        <img src="https://github.com/MaxwilliamSena/Visionguide/blob/main/Imagem%20do%20WhatsApp%20de%202025-10-09%20%C3%A0(s)%2001.03.40_9994ab34.jpg?raw=true" alt="" style="border-radius: 75PX; height: 135PX; width: 150PX;">
+                    </div>
+                    <h3 class="text-xl font-bold font-poppins mb-2">Giovanna Crisostomo</h3>
+                    <p class="text-electric-cyan font-semibold mb-3">Desenvolvedora Web e Pesquisadora</p>
+                    <p class="text-gray-600 text-sm">Responsável pela criação do site de apresentação do produto. Atuou também na coleta dos registros de desenvolvimento e participou do processo de pesquisa para fundamentar o projeto.</p>
                 </div>
                 
                 <div class="text-center card-hover">
                     <div class="w-32 h-32 bg-gradient-to-br from-electric-cyan to-tech-blue rounded-full mx-auto mb-6 flex items-center justify-center">
-                        <span class="text-4xl text-white">👩‍⚕</span>
+                        <img src="https://github.com/MaxwilliamSena/Visionguide/blob/main/Jessica.jpg?raw=true" alt="" style="border-radius: 75PX; height: 135PX; width: 150PX;">
                     </div>
-                    <h3 class="text-xl font-bold font-poppins mb-2">Maria Lima</h3>
-                    <p class="text-electric-cyan font-semibold mb-3">Consultora Clínica</p>
-                    <p class="text-gray-600 text-sm">Terapia Ocupacional - Especialista em reabilitação e tecnologia assistiva.</p>
+                    <h3 class="text-xl font-bold font-poppins mb-2">Jéssica Albuquerque</h3>
+                    <p class="text-electric-cyan font-semibold mb-3">Analista de Requisitos e Gestão</p>
+                    <p class="text-gray-600 text-sm">Conduziu a análise de requisitos e pesquisas de mercado para orientar o desenvolvimento. Também foi responsável pelo registro e documentação do processo do projeto.</p>
                 </div>
+                
             </div>
         </div>
     </section>
@@ -782,6 +991,25 @@
     </footer>
 
     <script>
+
+        //video
+                // 1. Seleciona o elemento de vídeo pelo ID
+        const videoElement = document.getElementById('myVideo');
+
+        // 2. Adiciona o ouvinte de evento para quando o vídeo for clicado
+        videoElement.addEventListener('click', () => {
+            
+            // Verifica se o navegador suporta o modo tela cheia
+            if (videoElement.requestFullscreen) {
+                // Solicita o modo tela cheia para o elemento de vídeo
+                videoElement.requestFullscreen();
+            } else {
+                // Mensagem de fallback para navegadores muito antigos
+                console.log("O modo tela cheia não é suportado por este navegador.");
+            }
+        });
+        
+
         // Rotação do modelo 3D
         function rotateDevice(element) {
             const currentTransform = element.style.transform;
@@ -866,16 +1094,24 @@
             }, 1500);
         }
 
-        // Animações de entrada
-        const fadeElements = document.querySelectorAll('.fade-in-up');
-        fadeElements.forEach((element, index) => {
-            element.style.animationDelay = ${index * 0.1}s;
-        });
+
 
         // Menu mobile (se necessário)
         function toggleMobileMenu() {
             // Implementar se necessário
         }
-    </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9826b797d4f7ca5e',t:'MTc1ODQyNzg3Mi4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+
+        // Carrossel 3: Vertical
+        let verticalCurrentSlide = 0;
+        function verticalSlide(direction) {
+            const track = document.getElementById('verticalTrack');
+            if (direction === 0 && verticalCurrentSlide > 0) {
+                verticalCurrentSlide--;
+            } else if (direction === 1 && verticalCurrentSlide < 2) {
+                verticalCurrentSlide++;
+            }
+            track.style.transform = `translateY(-${verticalCurrentSlide * 320}px)`;
+        }
+   </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'98b78f57b0ea196f',t:'MTc1OTk0NjY1OC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
