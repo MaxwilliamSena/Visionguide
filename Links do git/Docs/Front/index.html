@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aventura na Floresta Amazônica</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts: Fira Code for Terminal Look -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <style>
+        :root {
+            --term-green: #4ade80;
+            --term-dark: #020b05;
+            --term-card: #051a0c;
+            --term-brown: #5c3a21;
+        }
+        
+        body {
+            font-family: 'Fira Code', monospace;
+            background-color: var(--term-dark);
+            color: var(--term-green);
+            overflow-x: hidden;
+        }
+
+        /* CRT Scanline Effect */
+        .scanlines {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: linear-gradient(
+                to bottom,
+                rgba(255,255,255,0),
+                rgba(255,255,255,0) 50%,
+                rgba(0,0,0,0.2) 50%,
+                rgba(0,0,0,0.2)
+            );
+            background-size: 100% 4px;
+            pointer-events: none;
+            z-index: 9999;
+            opacity: 0.3;
+        }
+
+        /* Glowing text and borders */
+        .glow-text {
+            text-shadow: 0 0 5px rgba(74, 222, 128, 0.5);
+        }
+        .glow-border {
+            box-shadow: 0 0 10px rgba(74, 222, 128, 0.2);
+        }
+        .glow-border:hover {
+            box-shadow: 0 0 20px rgba(74, 222, 128, 0.5);
+            border-color: var(--term-green);
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+        ::-webkit-scrollbar-track {
+            background: var(--term-dark);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: var(--term-green);
+            border: 1px solid var(--term-dark);
+        }
+
+        /* Blinking cursor */
+        .cursor-blink {
+            animation: blink 1s step-end infinite;
+        }
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+
+        /* Fade-in Animation Classes */
+        .fade-in-section {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+            will-change: opacity, visibility;
+        }
+        .fade-in-section.is-visible {
+            opacity: 1;
+            transform: none;
+        }
+
+        /* Terminal Window Header */
+        .term-header {
+            background: #111;
+            border-bottom: 1px solid var(--term-green);
+            display: flex;
+            align-items: center;
+            padding: 4px 10px;
+        }
+        .term-btn {
+            width: 12px; height: 12px; border-radius: 50%; margin-right: 6px;
+        }
+    </style>
+</head>
+<body class="antialiased selection:bg-green-500 selection:text-black relative">
+
+    <!-- Scanline overlay -->
+    <div class="scanlines"></div>
+
+    <nav class="fixed w-full top-0 z-50 bg-[#020b05]/90 border-b border-green-800/50 backdrop-blur-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center gap-2">
+                    <i data-lucide="terminal" class="w-6 h-6 text-green-400"></i>
+                    <span class="font-bold text-xl tracking-tighter glow-text">AFA_v1.0</span>
+                </div>
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-6 text-sm">
+                        <a href="#sobre" class="hover:text-white hover:bg-green-900/30 px-3 py-2 rounded transition-colors">[ SOBRE ]</a>
+                        <a href="#fases" class="hover:text-white hover:bg-green-900/30 px-3 py-2 rounded transition-colors">[ FASES ]</a>
+                        <a href="#controles" class="hover:text-white hover:bg-green-900/30 px-3 py-2 rounded transition-colors">[ CONTROLES ]</a>
+                        <a href="#instalacao" class="hover:text-white hover:bg-green-900/30 px-3 py-2 rounded transition-colors">[ INSTALAÇÃO ]</a>
+                    </div>
+                </div>
+                <!-- Mobile menu button -->
+                <div class="md:hidden">
+                    <button id="mobile-menu-btn" class="text-green-500 hover:text-white focus:outline-none">
+                        <i data-lucide="menu" class="w-6 h-6"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="hidden md:hidden bg-[#020b05] border-b border-green-800/50">
+            <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3 text-sm">
+                <a href="#sobre" class="block hover:text-white hover:bg-green-900/30 px-3 py-2 rounded">/SOBRE</a>
+                <a href="#fases" class="block hover:text-white hover:bg-green-900/30 px-3 py-2 rounded">/FASES</a>
+                <a href="#controles" class="block hover:text-white hover:bg-green-900/30 px-3 py-2 rounded">/CONTROLES</a>
+                <a href="#instalacao" class="block hover:text-white hover:bg-green-900/30 px-3 py-2 rounded">/INSTALAÇÃO</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="pt-20">
+        <section id="hero" class="min-h-[85vh] flex flex-col justify-center items-center text-center px-4 relative overflow-hidden">
+            <!-- Background Decoration -->
+            <div class="absolute inset-0 z-[-1] opacity-10 flex items-center justify-center">
+                <pre class="text-[0.5rem] md:text-xs leading-none text-green-500 font-mono text-center select-none">
+  /\\  /\\
+ //\\\\//\\\\  FLORESTA 
+///\\\\\\///\\\\  AMAZÔNICA
+   ||   ||
+   ||   ||
+                </pre>
+            </div>
+
+            <div class="max-w-4xl mx-auto fade-in-section">
+                <p class="text-green-400/70 mb-4 tracking-widest text-sm uppercase">C:\Users\Jogador> iniciar_aventura.exe</p>
+                <h1 class="text-4xl md:text-6xl lg:text-7xl font-bold mb-6 text-green-400 glow-text leading-tight">
+                    AVENTURA NA <br class="md:hidden"/> 
+                    <span class="text-[#8b5a2b]">FLORESTA AMAZÔNICA</span>
+                </h1>
+                <p class="text-lg md:text-xl mb-10 max-w-2xl mx-auto text-green-200/80">
+                    Um jogo educativo de exploração em terminal. 100% acessível para NVDA. Explore, aprenda sobre sustentabilidade e sobreviva na maior floresta do mundo.
+                </p>
+                <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                    <a href="#instalacao" class="px-8 py-4 bg-green-600/10 border border-green-500 text-green-400 hover:bg-green-500 hover:text-black font-bold uppercase transition-all duration-300 glow-border flex items-center justify-center gap-2">
+                        <i data-lucide="play" class="w-5 h-5"></i> Começar Aventura
+                    </a>
+                    <a href="#sobre" class="px-8 py-4 bg-transparent border border-gray-600 text-gray-400 hover:border-green-500 hover:text-green-400 uppercase transition-all duration-300 flex items-center justify-center gap-2">
+                        <i data-lucide="info" class="w-5 h-5"></i> Ler Manual
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <section id="sobre" class="py-20 bg-gradient-to-b from-[var(--term-dark)] to-[var(--term-card)] border-t border-green-900/30">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center mb-16 fade-in-section">
+                    <h2 class="text-3xl font-bold mb-2 glow-text">> SOBRE O SISTEMA</h2>
+                    <div class="h-1 w-24 bg-green-500 mx-auto opacity-50"></div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <!-- DB Local -->
+                    <div class="bg-[var(--term-dark)] border border-green-800/40 p-6 glow-border fade-in-section">
+                        <div class="w-12 h-12 bg-green-900/30 rounded flex items-center justify-center mb-4 border border-green-700/50">
+                            <i data-lucide="database" class="w-6 h-6 text-green-400"></i>
+                        </div>
+                        <h3 class="text-xl font-bold mb-3">Banco de Dados Local</h3>
+                        <p class="text-green-200/70 text-sm leading-relaxed">
+                            O jogo cria automaticamente o arquivo <span class="text-green-400 bg-green-900/20 px-1">aventura_floresta.db</span>. Todo o seu progresso, dados da sessão, fase perdida e informações de usuário são salvos via SQLite. Nenhuma internet necessária.
+                        </p>
+                    </div>
+                    
+                    <!-- Ranking & SKL -->
+                    <div class="bg-[var(--term-dark)] border border-green-800/40 p-6 glow-border fade-in-section" style="transition-delay: 100ms;">
+                        <div class="w-12 h-12 bg-[#8b5a2b]/30 rounded flex items-center justify-center mb-4 border border-[#8b5a2b]/50">
+                            <i data-lucide="trophy" class="w-6 h-6 text-[#8b5a2b]"></i>
+                        </div>
+                        <h3 class="text-xl font-bold mb-3 text-[#8b5a2b]">Ranking & SKL</h3>
+                        <p class="text-green-200/70 text-sm leading-relaxed">
+                            O SKL é sua pontuação interna de progresso, que aumenta ao concluir fases. Consulte o <span class="text-green-400 bg-green-900/20 px-1">Ranking</span> (tecla R) local para ver os melhores tempos, melhores fases e maiores SKL.
+                        </p>
+                    </div>
+
+                    <!-- Acessibilidade -->
+                    <div class="bg-[var(--term-dark)] border border-green-800/40 p-6 glow-border fade-in-section" style="transition-delay: 200ms;">
+                        <div class="w-12 h-12 bg-green-900/30 rounded flex items-center justify-center mb-4 border border-green-700/50">
+                            <i data-lucide="ear" class="w-6 h-6 text-green-400"></i>
+                        </div>
+                        <h3 class="text-xl font-bold mb-3">100% Acessível</h3>
+                        <p class="text-green-200/70 text-sm leading-relaxed">
+                            Desenvolvido nativamente para integração com o leitor de telas <span class="text-green-400 bg-green-900/20 px-1">NVDA</span>. Funcionamento sem bibliotecas externas complexas de áudio, guiado totalmente por teclado.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="fases" class="py-20 bg-[var(--term-card)]">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="mb-12 fade-in-section">
+                    <h2 class="text-3xl font-bold mb-2 glow-text">> FASES_DA_AVENTURA.TXT</h2>
+                    <p class="text-green-400/60 text-sm">Carregando mapas... 7 fases encontradas.</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    
+                    <!-- Fase 1 -->
+                    <div class="border border-green-700/30 bg-[#020b05] p-5 hover:border-green-500 transition-colors fade-in-section relative group">
+                        <div class="absolute top-0 right-0 bg-green-900/40 text-xs px-2 py-1 border-b border-l border-green-700/30">Fase 1</div>
+                        <h3 class="font-bold text-lg mb-2 text-[#8b5a2b]">Entrada e Orientação</h3>
+                        <p class="text-sm text-green-200/70 mb-3">Encontre equipamentos e escolha sua facção (Guardiões, Exploradores ou Amigos da Fauna). <br><br><strong>Importante:</strong> Após coletar tudo, use <code>T</code> para entrar no túnel e <code>A</code> para avançar e concluir.</p>
+                    </div>
+
+                    <!-- Fase 2 -->
+                    <div class="border border-green-700/30 bg-[#020b05] p-5 hover:border-green-500 transition-colors fade-in-section relative group">
+                        <div class="absolute top-0 right-0 bg-green-900/40 text-xs px-2 py-1 border-b border-l border-green-700/30">Fase 2</div>
+                        <h3 class="font-bold text-lg mb-2 text-green-400">Rio e Acampamento</h3>
+                        <p class="text-sm text-green-200/70 mb-3">Explore o rio e cachoeira. Colete frutos e água de forma responsável. <br><br><strong>Aprendizado:</strong> Lembre-se que toda água desconhecida deve ser tratada antes do consumo.</p>
+                    </div>
+
+                    <!-- Fase 3 -->
+                    <div class="border border-[#8b5a2b]/50 bg-[#020b05] p-5 hover:border-green-500 transition-colors fade-in-section relative group shadow-[0_0_15px_rgba(139,90,43,0.1)]">
+                        <div class="absolute top-0 right-0 bg-[#8b5a2b]/40 text-xs px-2 py-1 border-b border-l border-[#8b5a2b]/50">Fase 3</div>
+                        <h3 class="font-bold text-lg mb-2 text-green-400 flex items-center gap-2"><i data-lucide="fish" class="w-4 h-4 text-blue-400"></i> Pescaria e Jangada</h3>
+                        <p class="text-sm text-green-200/70 mb-3"><strong>Regra Especial:</strong> Você deve pescar exatamente 10 peixes (<code>G</code>). Depois, acender fogo em local seguro (<code>L</code>), assar os peixes (<code>C</code>) e montar a jangada (<code>J</code>) para avançar.</p>
+                    </div>
+
+                    <!-- Fase 4 -->
+                    <div class="border border-green-700/30 bg-[#020b05] p-5 hover:border-green-500 transition-colors fade-in-section relative group">
+                        <div class="absolute top-0 right-0 bg-green-900/40 text-xs px-2 py-1 border-b border-l border-green-700/30">Fase 4</div>
+                        <h3 class="font-bold text-lg mb-2 text-green-400">Saberes da Floresta</h3>
+                        <p class="text-sm text-green-200/70 mb-3">Visite a comunidade local e o espaço dos saberes. Encontre materiais educativos e atravesse o túnel cultural. Respeito aos conhecimentos tradicionais é fundamental.</p>
+                    </div>
+
+                    <!-- Fase 5 -->
+                    <div class="border border-green-700/30 bg-[#020b05] p-5 hover:border-green-500 transition-colors fade-in-section relative group">
+                        <div class="absolute top-0 right-0 bg-green-900/40 text-xs px-2 py-1 border-b border-l border-green-700/30">Fase 5</div>
+                        <h3 class="font-bold text-lg mb-2 text-green-400">Fauna e Flora</h3>
+                        <p class="text-sm text-green-200/70 mb-3">Explore a trilha e uma aldeia abandonada. Observe os animais silvestres e a rica flora local, mas lembre-se: faça-o sem perturbar a natureza.</p>
+                    </div>
+
+                    <!-- Fase 6 -->
+                    <div class="border border-green-700/30 bg-[#020b05] p-5 hover:border-green-500 transition-colors fade-in-section relative group">
+                        <div class="absolute top-0 right-0 bg-green-900/40 text-xs px-2 py-1 border-b border-l border-green-700/30">Fase 6</div>
+                        <h3 class="font-bold text-lg mb-2 text-green-400">Vida na Comunidade</h3>
+                        <p class="text-sm text-green-200/70 mb-3">Sobrevivência responsável. Encontre itens cruciais na área da comunidade e aprenda a navegar nos túneis complexos usando os comandos <code>T</code>, <code>A</code> e <code>R</code>.</p>
+                    </div>
+
+                    <!-- Fase 7 -->
+                    <div class="border border-green-700/30 bg-[#020b05] p-5 hover:border-green-500 transition-colors fade-in-section relative group lg:col-span-3 lg:w-2/3 mx-auto">
+                        <div class="absolute top-0 right-0 bg-green-900/40 text-xs px-2 py-1 border-b border-l border-green-700/30">Fase 7</div>
+                        <h3 class="font-bold text-lg mb-2 text-yellow-500 flex items-center gap-2"><i data-lucide="flag" class="w-4 h-4"></i> Acampamento Final</h3>
+                        <p class="text-sm text-green-200/70 mb-3">O desafio definitivo na área de conservação. Complete as tarefas ambientais finais, aplique tudo o que aprendeu sobre redução de resíduos e sustentabilidade para vencer o jogo!</p>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <section id="controles" class="py-20 bg-gradient-to-t from-[var(--term-dark)] to-[var(--term-card)] border-t border-green-900/30">
+            <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="mb-12 text-center fade-in-section">
+                    <h2 class="text-3xl font-bold mb-2 glow-text">> HELP_CONTROLS.SYS</h2>
+                    <p class="text-green-400/60 text-sm">Mapeamento de teclado ativado.</p>
+                </div>
+
+                <!-- Terminal Window -->
+                <div class="rounded-lg overflow-hidden border border-green-800 shadow-[0_0_30px_rgba(74,222,128,0.1)] fade-in-section">
+                    <div class="term-header">
+                        <div class="term-btn bg-red-500"></div>
+                        <div class="term-btn bg-yellow-500"></div>
+                        <div class="term-btn bg-green-500"></div>
+                        <div class="text-gray-400 text-xs ml-4 font-sans">CMD - Controles</div>
+                    </div>
+                    <div class="bg-black p-6 text-sm md:text-base leading-relaxed">
+                        <p class="mb-4">C:\Floresta> type manual_controles.txt</p>
+                        
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-2">
+                            <div><span class="text-yellow-400 font-bold">[SETAS]</span> Movimentação pelo cenário</div>
+                            <div><span class="text-yellow-400 font-bold">[T]</span> Entrar no túnel</div>
+                            <div><span class="text-yellow-400 font-bold">[A]</span> Avançar dentro do túnel</div>
+                            <div><span class="text-yellow-400 font-bold">[R]</span> Retornar no túnel / Consultar Ranking</div>
+                            <div><span class="text-yellow-400 font-bold">[P]</span> Pegar / Coletar item</div>
+                            <div><span class="text-yellow-400 font-bold">[H]</span> Obter uma dica</div>
+                            <div><span class="text-yellow-400 font-bold">[I]</span> Abrir Inventário</div>
+                            <div><span class="text-yellow-400 font-bold">[O]</span> Observar ambiente</div>
+                            <div><span class="text-yellow-400 font-bold">[S/D]</span> Subir / Descer da árvore</div>
+                            <div><span class="text-yellow-400 font-bold">[ESPAÇO]</span> Pular obstáculo</div>
+                            <div><span class="text-yellow-400 font-bold">[F]</span> Fugir / Reagir a perigo</div>
+                            <div><span class="text-yellow-400 font-bold">[B/N]</span> Coletar / Tratar (Beber) água</div>
+                            <div><span class="text-yellow-400 font-bold">[L]</span> Acender / Apagar fogo</div>
+                            <div><span class="text-yellow-400 font-bold">[G]</span> Pescar (Fase 3)</div>
+                            <div><span class="text-yellow-400 font-bold">[C]</span> Comer / Assar peixe (Fase 3)</div>
+                            <div><span class="text-yellow-400 font-bold">[J]</span> Montar Jangada (Fase 3)</div>
+                            <div><span class="text-yellow-400 font-bold">[E]</span> Estudar lição da fase</div>
+                            <div><span class="text-red-400 font-bold">[Q]</span> Sair do jogo</div>
+                        </div>
+                        
+                        <p class="mt-6 flex items-center">
+                            <span class="text-green-500 mr-2">C:\Floresta></span> <span class="w-2 h-4 bg-green-500 inline-block cursor-blink"></span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="instalacao" class="py-20 bg-[var(--term-dark)]">
+            <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="mb-12 fade-in-section text-center">
+                    <h2 class="text-3xl font-bold mb-2 glow-text">> SETUP.EXE</h2>
+                    <p class="text-green-400/60 text-sm">Preparando ambiente de execução.</p>
+                </div>
+
+                <div class="space-y-6 fade-in-section">
+                    <div class="flex flex-col md:flex-row items-start gap-4 border-l-2 border-green-600 pl-4 py-2">
+                        <div class="bg-green-900/30 text-green-400 w-8 h-8 rounded flex items-center justify-center font-bold shrink-0">1</div>
+                        <div>
+                            <h4 class="font-bold text-lg mb-1">Download do Arquivo</h4>
+                            <p class="text-sm text-green-200/70">Coloque o arquivo principal <code class="bg-[#051a0c] px-2 py-1 text-green-400 border border-green-800/50">jogo_aventura.py</code> em uma pasta dedicada no seu computador.</p>
+                        </div>
+                    </div>
+
+                    <div class="flex flex-col md:flex-row items-start gap-4 border-l-2 border-green-600 pl-4 py-2">
+                        <div class="bg-green-900/30 text-green-400 w-8 h-8 rounded flex items-center justify-center font-bold shrink-0">2</div>
+                        <div>
+                            <h4 class="font-bold text-lg mb-1">Abrir o Terminal</h4>
+                            <p class="text-sm text-green-200/70">Abra o Prompt de Comando (CMD) ou PowerShell e navegue até a pasta onde salvou o jogo.</p>
+                        </div>
+                    </div>
+
+                    <div class="flex flex-col md:flex-row items-start gap-4 border-l-2 border-[#8b5a2b] pl-4 py-2">
+                        <div class="bg-[#8b5a2b]/30 text-[#8b5a2b] w-8 h-8 rounded flex items-center justify-center font-bold shrink-0">3</div>
+                        <div>
+                            <h4 class="font-bold text-lg mb-1 text-[#8b5a2b]">Execução</h4>
+                            <p class="text-sm text-green-200/70 mb-2">Execute o comando abaixo. O banco de dados <code class="text-yellow-400">aventura_floresta.db</code> será criado automaticamente na primeira vez.</p>
+                            <div class="bg-black border border-gray-800 p-3 rounded font-mono text-sm text-gray-300">
+                                <span class="text-green-500">></span> python jogo_aventura.py
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="border-t border-green-900/50 bg-[#010502] py-8 text-center">
+        <div class="max-w-7xl mx-auto px-4">
+            <i data-lucide="leaf" class="w-6 h-6 text-green-500 mx-auto mb-4"></i>
+            <p class="text-green-500/50 text-sm">© 2026 Aventura na Floresta Amazônica.</p>
+            <p class="text-green-500/30 text-xs mt-1">Desenvolvido com foco educacional e acessibilidade NVDA.</p>
+            <p class="text-green-500/20 text-xs mt-4 uppercase">EOF</p>
+        </div>
+    </footer>
+
+    <script>
+        // Initialize Lucide Icons
+        lucide.createIcons();
+
+        // Mobile Menu Toggle
+        const btn = document.getElementById('mobile-menu-btn');
+        const menu = document.getElementById('mobile-menu');
+
+        btn.addEventListener('click', () => {
+            menu.classList.toggle('hidden');
+        });
+
+        // Close mobile menu on link click
+        document.querySelectorAll('#mobile-menu a').forEach(link => {
+            link.addEventListener('click', () => {
+                menu.classList.add('hidden');
+            });
+        });
+
+        // Intersection Observer for scroll animations (fade-in)
+        const observerOptions = {
+            root: null,
+            rootMargin: '0px',
+            threshold: 0.15
+        };
+
+        const observer = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('is-visible');
+                    observer.unobserve(entry.target); // Run once
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.fade-in-section').forEach(section => {
+            observer.observe(section);
+        });
+
+        // Optional: Retro glitch effect randomly applied to hero title
+        const heroTitle = document.querySelector('h1');
+        setInterval(() => {
+            if(Math.random() > 0.95) {
+                heroTitle.style.transform = `translate(${Math.random() * 4 - 2}px, ${Math.random() * 4 - 2}px)`;
+                setTimeout(() => {
+                    heroTitle.style.transform = 'translate(0, 0)';
+                }, 50);
+            }
+        }, 2000);
+    </script>
+</body>
+</html>
