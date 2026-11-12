@@ -1,0 +1,4 @@
+# Saida da etapa de build; gerada automaticamente no GitHub Actions
+dist/
+node_modules/
+.DS_Store

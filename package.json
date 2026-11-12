@@ -1,0 +1,14 @@
+{
+  "name": "visionguide-site",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Pipeline de CI/CD para a página Aventura na Floresta Amazônica (Visionguide)",
+  "scripts": {
+    "test": "node --test",
+    "build": "node scripts/build.mjs",
+    "check": "npm run test && npm run build"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
